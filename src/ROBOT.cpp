@@ -128,6 +128,14 @@ void ROBOT::Loop()
 
             Yukon.OLED.display();
         }
+         else if (State.AutonLightSensorActive)
+           { Yukon.OLED.clearDisplay();
+            Yukon.OLED.setCursor(0,0);
+            Yukon.OLED.setTextSize(2);
+            Yukon.OLED.print(Auton.QueuedProgramName());
+            Yukon.OLED.println("Engaged!");
+            Yukon.OLED.display();
+           }
         else
         {
             Yukon.OLED.clearDisplay();
