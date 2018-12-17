@@ -73,7 +73,7 @@ void ROBOT::Loop()
             delay(1000);
         }
      //Read The Sensors
-    uint16_t LightSensorVal = Yukon.ADC.readADC(_AutonLightSensor);
+    uint16_t LightSensorVal = analogRead(33);
     State.AutonLightSensorActive = (LightSensorVal <= _AutonLightSensorThreshold);
 
     //Write To Motor Controllers
