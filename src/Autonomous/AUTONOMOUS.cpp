@@ -24,25 +24,21 @@ void AUTONOMOUS::Loop()
      _RunningAuton = "";
     delay(20);
 }
-// (3000,127,127,50) 3000 is the time (3 sec), 127 is speed, 50% is delay until it starts the next command
 
-// The Auton1 Drives forward for 3 seconds, and engages the lift at 1.5 seconds.
 void AUTONOMOUS::ExecAuton1()
 {
-    Robot.Drive.ForAsync(3000, 127, 127, 50);
-    Robot.Lift.ForAsync(500, 127, 100);
+    Robot.Drive.ForAsync(2000, 127, 127, 10);
+    Robot.Lift.ForAsync(250, 127, 100); 
+
 }
-// The Auton2 Drives forward for half a second.
 void AUTONOMOUS::ExecAuton2()
 {
     Robot.Lift.ForAsync(500, 127, 100);
 }
-//Auton3 drives forward for 3 seconds.
 void AUTONOMOUS::ExecAuton3()
 {
     Robot.Drive.ForAsync(3000, 127, 127, 100);
 }
-//Auton4 drives forward for 3 seconds.
 void AUTONOMOUS::ExecAuton4()
 {
     Robot.Drive.ForAsync(3000, 127, 127, 100);
