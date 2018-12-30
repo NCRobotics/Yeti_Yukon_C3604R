@@ -44,6 +44,8 @@ void ROBOT::Loop()
         if (Xbox.Xbox360Connected[i])
         {
         Drive.OISetSpeed(Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(RightHatY, i), 7500),Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatY, i), 7500));
+        //To switch to arcade mode, remove the slash marks from line 48 and add the in the front of line 46
+        //Drive.OISetSpeed(Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatY, i),7500)-Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatX, i), 7500),Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatY, i), 7500)+Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatX, i), 7500));
         Lift.OISetSpeed(Xbox.getButtonPress(R2, i) - Xbox.getButtonPress(L2, i));
         Claw.OISetSpeed(Xbox.getButtonPress(A));
         BuddyBot.OISetSpeed((Xbox.getButtonPress(R1, i)*255) - (Xbox.getButtonPress(L1, i)*255));
@@ -73,13 +75,14 @@ void ROBOT::Loop()
             delay(1000);
         }
      //Read The Sensors
-    uint16_t LightSensorVal = analogRead(33);
+    uint16_t LightSensorVal = analogRead(33); 
+    //Serial.println(LightSensorVal); 
     State.AutonLightSensorActive = (LightSensorVal <= _AutonLightSensorThreshold);
 
     //Write To Motor Controllers
     if (_NextMotorControllerWriteMillis < millis())
     {
-        _NextMotorControllerWriteMillis = millis() + 20;
+        _NextMotorControllerWriteMillis = millis() + 20; 
     DriveRight.SetMotorSpeed(State.DriveRightSpeed);
     DriveLeft.SetMotorSpeed(State.DriveLeftSpeed);
     LiftMotor.SetMotorSpeed(State.LiftMotorSpeed);
@@ -128,24 +131,14 @@ void ROBOT::Loop()
 
             Yukon.OLED.display();
         }
-         else if (State.AutonLightSensorActive)
-           { Yukon.OLED.clearDisplay();
-            Yukon.OLED.setCursor(0,0);
-            Yukon.OLED.setTextSize(2);
-            Yukon.OLED.print(Auton.QueuedProgramName());
-            Yukon.OLED.println("Engaged!");
-            Yukon.OLED.display();
-           }
         else
         {
             Yukon.OLED.clearDisplay();
             Yukon.OLED.setCursor(0, 0);
             Yukon.OLED.setTextSize(1);
-            Yukon.OLED.println("NC Robotics");
-            Yukon.OLED.println("Team C3604R");
-            Yukon.OLED.println("'Who Cares!'");
+            Yukon.OLED.println("NC Robotics!");
+            Yukon.OLED.println("C3604R");
             Yukon.OLED.display();
-
         }
     }
 }

@@ -4,7 +4,7 @@
 #include <YETI_YUKON.h>
 #include <ROBOT.h>
 
-YETI_YUKON Yukon("YOURROBOTNAME", "91fcbd26-f08c-43e9-bf28-a83046f27b96");
+YETI_YUKON Yukon("YOURROBOTNAME", "aa1b8985-1aa3-488f-987f-67aed4d5cf38");
 ROBOT Robot(Yukon);
 
 void WatchdogTask(void *pvParameters);

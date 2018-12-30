@@ -73,9 +73,9 @@ class ROBOT
 
     static const uint8_t _Button0 = 0;
     static const uint8_t _LEDBuiltIn = 25;
-    static const uint8_t _AutonLightSensor = 0;
+    static const uint8_t _AutonLightSensor = 1;
     
-    static const uint16_t _AutonLightSensorThreshold = 3000; 
+    static const uint16_t _AutonLightSensorThreshold = 300; //Value 0 - 1024
 
   private:
       long _NextDisplayMillis = 0;
