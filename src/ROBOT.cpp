@@ -55,7 +55,7 @@ void ROBOT::Loop()
         if(PrecisionMode)
         {
             LeftSpeed = LeftSpeed * .5;
-            RightSpeed RightSpeed  * .5;
+            RightSpeed = RightSpeed  * .5;
         }
 
 
@@ -81,7 +81,7 @@ void ROBOT::Loop()
         Auton.LaunchQueued();
 
         if (Xbox.getButtonClick(B))
-        IsArcadeMode = !IsArcadeMode
+        IsArcadeMode = !IsArcadeMode;
         
 
         if (Xbox.getButtonClick(XBOX))
@@ -103,7 +103,7 @@ void ROBOT::Loop()
     State.AutonLightSensorActive = (LightSensorVal <= _AutonLightSensorThreshold);
 
     uint16_t EncoderRevolutions = analogRead(32);
-    Serial.println(EncoderRevolutions)
+    Serial.println(EncoderRevolutions);
 
     //Write To Motor Controllers
     if (_NextMotorControllerWriteMillis < millis())
@@ -162,7 +162,7 @@ void ROBOT::Loop()
             Yukon.OLED.clearDisplay();
             Yukon.OLED.setCursor(0, 0);
             Yukon.OLED.setTextSize(2);
-            Yukon.OLED.print('Precsion Mode');
+            Yukon.OLED.print("Precsion Mode");
             Yukon.OLED.display();
         }
         else
