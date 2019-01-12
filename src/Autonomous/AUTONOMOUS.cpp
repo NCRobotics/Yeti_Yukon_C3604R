@@ -24,12 +24,17 @@ void AUTONOMOUS::Loop()
      _RunningAuton = "";
     delay(20);
 }
-
+//You need to travel about 1140 ms to go a whole tile
 void AUTONOMOUS::ExecAuton1()
 {
-    Robot.Drive.ForAsync(2000, 127, 127, 10);
-    Robot.Lift.ForAsync(250, 127, 100); 
+    Robot.Drive.ForAsync(3500, 100, 100, 100);
+    Robot.Drive.ForAsync(3500, -100, -100, 100);
+    Robot.Drive.ForAsync(1140, 100, 100, 100);
+    Robot.DriveLeft.ForAsync(1139, 100, 100, 0);
+    Robot.DriveRight.ForAsync(1139, -100, -100, 100);
+    Robot.Drive.ForAsync(300, 255, 255, 100);
 
+  
 }
 void AUTONOMOUS::ExecAuton2()
 {
