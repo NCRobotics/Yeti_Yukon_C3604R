@@ -30,14 +30,14 @@ void AUTONOMOUS::ExecAuton1()
     Robot.Drive.ForAsync(3500, 100, 100, 100);
     Robot.Drive.ForAsync(3500, -100, -100, 100);
     Robot.Drive.ForAsync(1140, 100, 100, 100);
-    Robot.DriveLeft.ForAsync(1139, 100, 100, 0);
-    Robot.DriveRight.ForAsync(1139, -100, -100, 100);
+    Robot.Drive.ForAsync(0714, -100, 100, 100);
     Robot.Drive.ForAsync(300, 255, 255, 100);
 
   
 }
 void AUTONOMOUS::ExecAuton2()
 {
+
     Robot.Lift.ForAsync(500, 127, 100);
 }
 void AUTONOMOUS::ExecAuton3()
