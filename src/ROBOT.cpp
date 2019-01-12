@@ -48,7 +48,7 @@ void ROBOT::Loop()
         int16_t RightSpeed = (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(RightHatY, i), 7500));
         if(IsArcadeMode)
         {
-            LeftSpeed = (Xbox.getAnalogHat(LeftHatX, i), 7500) - (Xbox.getAnalogHat(LeftHatX, i), 7500);
+            LeftSpeed = (Xbox.getAnalogHat(LeftHatY, i), 7500) - (Xbox.getAnalogHat(LeftHatX, i), 7500);
             RightSpeed = (Xbox.getAnalogHat(LeftHatY, i), 7500) + (Xbox.getAnalogHat(LeftHatX, i), 7500);
         }
         
