@@ -159,7 +159,7 @@ void ROBOT::Loop()
         {
             Yukon.OLED.clearDisplay();
             Yukon.OLED.setCursor(0, 0);
-            Yukon.OLED.setTextSize(1);
+            Yukon.OLED.setTextSize(1.1);
             Yukon.OLED.print("Precsion Mode");
             Yukon.OLED.display();
         }
