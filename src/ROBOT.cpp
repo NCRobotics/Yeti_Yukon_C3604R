@@ -1,5 +1,4 @@
 #include "ROBOT.h"
-
 ROBOT::ROBOT(YETI_YUKON &rYukon) : Yukon(rYukon),
      DriveRight(_DriveRightPWM, &Yukon.PWM, _DriveRightDir, _DriveRightReversed), 
      DriveLeft(_DriveLeftPWM, &Yukon.PWM, _DriveLeftDir, _DriveLeftReversed), 
@@ -59,9 +58,6 @@ void ROBOT::Loop()
         }
 
         Drive.OISetSpeed(RightSpeed, LeftSpeed);
-        
-        //To switch to arcade mode, remove the slash marks from line 48 and add the in the front of line 46
-        // Drive.OISetSpeed(Xbox.getAnalogHat(LeftHatX, i), 7500),Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatY, i), 7500)+Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatX, i), 7500));
         Lift.OISetSpeed(Xbox.getButtonPress(R2, i) - Xbox.getButtonPress(L2, i));
         Claw.OISetSpeed(Xbox.getButtonPress(A));
         BuddyBot.OISetSpeed((Xbox.getButtonPress(R1, i)*255) - (Xbox.getButtonPress(L1, i)*255));
@@ -163,7 +159,7 @@ void ROBOT::Loop()
         {
             Yukon.OLED.clearDisplay();
             Yukon.OLED.setCursor(0, 0);
-            Yukon.OLED.setTextSize(2);
+            Yukon.OLED.setTextSize(1);
             Yukon.OLED.print("Precsion Mode");
             Yukon.OLED.display();
         }
