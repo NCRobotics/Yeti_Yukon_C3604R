@@ -44,12 +44,12 @@ void ROBOT::Loop()
         {
         if (Xbox.Xbox360Connected[i])
         {
-        int16_t LeftSpeed =  (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatY, i), 7500));
-        int16_t RightSpeed = (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(RightHatY, i), 7500));
+        int16_t RightSpeed  = (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatY, i), 7500));
+        int16_t LeftSpeed = (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(RightHatY, i), 7500));
         if(IsArcadeMode)
         {
-            LeftSpeed = (Xbox.getAnalogHat(LeftHatY, i), 7500) - (Xbox.getAnalogHat(LeftHatX, i), 7500);
-            RightSpeed = (Xbox.getAnalogHat(LeftHatY, i), 7500) + (Xbox.getAnalogHat(LeftHatX, i), 7500);
+            LeftSpeed =  (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatX, i), 7500)) - (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatY, i), 7500));
+            RightSpeed = (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatY, i), 7500)) + (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatX, i), 7500));
         }
         
         if(PrecisionMode)
@@ -57,8 +57,6 @@ void ROBOT::Loop()
             LeftSpeed = LeftSpeed * .5;
             RightSpeed = RightSpeed  * .5;
         }
-
-
 
         Drive.OISetSpeed(RightSpeed, LeftSpeed);
         
@@ -70,12 +68,16 @@ void ROBOT::Loop()
     
         if (Xbox.getButtonClick(LEFT))
         Auton.QueuePrev();
+        
         if (Xbox.getButtonClick(RIGHT))
         Auton.QueueNext();
+        
         if (Xbox.getButtonClick(DOWN))
         Auton.ToggleArmed();
+        
         if (Xbox.getButtonClick(Y))
         PrecisionMode = !PrecisionMode;
+
 
         if (Xbox.getButtonClick(X))
         Auton.LaunchQueued();
@@ -99,11 +101,11 @@ void ROBOT::Loop()
         }
      //Read The Sensors
     uint16_t LightSensorVal = analogRead(33); 
-    //Serial.println(LightSensorVal); 
+   // Serial.println(LightSensorVal); 
     State.AutonLightSensorActive = (LightSensorVal <= _AutonLightSensorThreshold);
 
-    uint16_t EncoderRevolutions = analogRead(32);
-    Serial.println(EncoderRevolutions);
+    //uint16_t EncoderRevolutions = analogRead(32);
+    //Serial.println(EncoderRevolutions);
 
     //Write To Motor Controllers
     if (_NextMotorControllerWriteMillis < millis())

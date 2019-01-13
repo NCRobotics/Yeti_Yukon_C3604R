@@ -27,24 +27,25 @@ void AUTONOMOUS::Loop()
 //You need to travel about 1140 ms to go a whole tile
 void AUTONOMOUS::ExecAuton1()
 {
-    Robot.Drive.ForAsync(3500, 100, 100, 100);
-    Robot.Drive.ForAsync(3500, -100, -100, 100);
-    Robot.Drive.ForAsync(1140, 100, 100, 100);
-    Robot.Drive.ForAsync(0714, -100, 100, 100);
-    Robot.Drive.ForAsync(300, 255, 255, 100);
+    Robot.Drive.ForAsync(3000, 100, 100, 100);
+    Robot.Drive.ForAsync(4300, -100, -100, 100);
+    Robot.Drive.ForAsync(1500, -100, 100, 100);
+    Robot.Drive.ForAsync(2000, 255, 255, 100);
 
   
 }
 void AUTONOMOUS::ExecAuton2()
 {
+    Robot.Drive.ForAsync(3000, 100, 100, 0);
+    Robot.BuddyBot.ForAsync(6600, 100 );
+    
 
-    Robot.Lift.ForAsync(500, 127, 100);
 }
 void AUTONOMOUS::ExecAuton3()
 {
-    Robot.Drive.ForAsync(3000, 127, 127, 100);
+    Robot.BuddyBot.ForAsync(6495  , 100 );
 }
 void AUTONOMOUS::ExecAuton4()
 {
-    Robot.Drive.ForAsync(3000, 127, 127, 100);
+    Robot.BuddyBot.ForAsync(1500, -255 );
 }
