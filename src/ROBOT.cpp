@@ -32,6 +32,11 @@ void ROBOT::Setup()
 }
 bool PrecisionMode = false;
 bool IsArcadeMode = false;
+bool IsNoLimits = false;
+int LeftHasBeenLimited = 0;
+int RightHasBeenLimited = 0;
+int16_t PreviousLeftSpeed = 0;
+int16_t PreviousRightSpeed = 0;
 void ROBOT::Loop()
 {
      //Read The Controller
@@ -43,21 +48,43 @@ void ROBOT::Loop()
         {
         if (Xbox.Xbox360Connected[i])
         {
-        int16_t RightSpeed  = (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatY, i), 7500));
-        int16_t LeftSpeed = (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(RightHatY, i), 7500));
+        int16_t CurrentRightSpeed  = (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatY, i), 7500));
+        int16_t CurrentLeftSpeed = (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(RightHatY, i), 7500));
+
+       if (_NextGetPrevSpeed < millis())
+        {
+        _NextGetPrevSpeed = millis() + 40;
+        CurrentLeftSpeed = PreviousLeftSpeed;
+        CurrentRightSpeed = PreviousRightSpeed;
+        }
+        if (IsNoLimits = (false))
+        {    
+            if ((CurrentLeftSpeed - PreviousLeftSpeed) > 2)
+            {   
+                CurrentLeftSpeed = (PreviousLeftSpeed + 2);
+                LeftHasBeenLimited = 1;
+            }
+
+            if ((CurrentRightSpeed - PreviousRightSpeed) > 2)
+            {
+                CurrentRightSpeed = (PreviousRightSpeed + 2);
+                RightHasBeenLimited = 1;
+            }
+        }
+
         if(IsArcadeMode)
         {
-            LeftSpeed =  (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatX, i), 7500)) - (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatY, i), 7500));
-            RightSpeed = (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatY, i), 7500)) + (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatX, i), 7500));
+            CurrentLeftSpeed =  (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatX, i), 7500)) - (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatY, i), 7500));
+            CurrentRightSpeed = (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatY, i), 7500)) + (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatX, i), 7500));
         }
         
         if(PrecisionMode)
         {
-            LeftSpeed = LeftSpeed * .5;
-            RightSpeed = RightSpeed  * .5;
+            CurrentLeftSpeed = CurrentLeftSpeed * .5;
+            CurrentRightSpeed = CurrentRightSpeed  * .5;
         }
 
-        Drive.OISetSpeed(RightSpeed, LeftSpeed);
+        Drive.OISetSpeed(CurrentRightSpeed, CurrentLeftSpeed);
         Lift.OISetSpeed(Xbox.getButtonPress(R2, i) - Xbox.getButtonPress(L2, i));
         Claw.OISetSpeed(Xbox.getButtonPress(A));
         BuddyBot.OISetSpeed((Xbox.getButtonPress(R1, i)*255) - (Xbox.getButtonPress(L1, i)*255));
@@ -81,6 +108,8 @@ void ROBOT::Loop()
         if (Xbox.getButtonClick(B))
         IsArcadeMode = !IsArcadeMode;
         
+        if (Xbox.getButtonClick(START))
+        IsNoLimits =!IsNoLimits;
 
         if (Xbox.getButtonClick(XBOX))
         Auton.ToggleLockArmed();
@@ -100,8 +129,8 @@ void ROBOT::Loop()
    // Serial.println(LightSensorVal); 
     State.AutonLightSensorActive = (LightSensorVal <= _AutonLightSensorThreshold);
 
-    //uint16_t EncoderRevolutions = analogRead(32);
-    //Serial.println(EncoderRevolutions);
+    /*uint16_t EncoderRevolutions = analogRead(32);
+    Serial.println(EncoderRevolutions);*/
 
     //Write To Motor Controllers
     if (_NextMotorControllerWriteMillis < millis())
@@ -111,7 +140,7 @@ void ROBOT::Loop()
     DriveLeft.SetMotorSpeed(State.DriveLeftSpeed);
     LiftMotor.SetMotorSpeed(State.LiftMotorSpeed);
     ClawMotor.SetMotorSpeed(State.ClawMotorSpeed);
-    BuddyBotLift.SetMotorSpeed(State.BuddyBotLiftSpeed);
+    BuddyBotLift.SetMotorSpeed(State.BuddyBotLiftSpeed); 
     }
 
     //Write the Display
@@ -161,6 +190,35 @@ void ROBOT::Loop()
             Yukon.OLED.setCursor(0, 0);
             Yukon.OLED.setTextSize(1.1);
             Yukon.OLED.print("Precsion Mode");
+            Yukon.OLED.display();
+        }
+        else if (LeftHasBeenLimited = (1))
+        {
+            Yukon.OLED.clearDisplay();
+            Yukon.OLED.setCursor(0, 0);
+            Yukon.OLED.setTextSize(1.1);
+            Yukon.OLED.print("Acceleration");
+            Yukon.OLED.print("Has Been");
+            Yukon.OLED.print("Limited (L)");
+            Yukon.OLED.display();
+        }
+        else if (RightHasBeenLimited = (1))
+        {
+            Yukon.OLED.clearDisplay();
+            Yukon.OLED.setCursor(0, 0);
+            Yukon.OLED.setTextSize(1.1);
+            Yukon.OLED.print("Acceleration");
+            Yukon.OLED.print("Has Been");
+            Yukon.OLED.print("Limited (R)");            
+            Yukon.OLED.display();
+        }
+        else if ((IsNoLimits) = (false))
+        {
+            Yukon.OLED.clearDisplay();
+            Yukon.OLED.setCursor(0, 0);
+            Yukon.OLED.setTextSize(1.1);
+            Yukon.OLED.print("Acceleration");
+            Yukon.OLED.print("Limited");
             Yukon.OLED.display();
         }
         else if(IsArcadeMode)
