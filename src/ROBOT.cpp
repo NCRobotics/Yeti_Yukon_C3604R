@@ -53,7 +53,7 @@ void ROBOT::Loop()
 
        if (_NextGetPrevSpeed < millis())
         {
-        _NextGetPrevSpeed = millis() + 40;
+        _NextGetPrevSpeed = millis() + 30;
         CurrentLeftSpeed = PreviousLeftSpeed;
         CurrentRightSpeed = PreviousRightSpeed;
         }
@@ -62,20 +62,20 @@ void ROBOT::Loop()
             if ((CurrentLeftSpeed - PreviousLeftSpeed) > 2)
             {   
                 CurrentLeftSpeed = (PreviousLeftSpeed + 2);
-                LeftHasBeenLimited = 1;
+                LeftHasBeenLimited = 0;
             }
 
             if ((CurrentRightSpeed - PreviousRightSpeed) > 2)
             {
                 CurrentRightSpeed = (PreviousRightSpeed + 2);
-                RightHasBeenLimited = 1;
+                RightHasBeenLimited = 0;
             }
         }
-
+        
         if(IsArcadeMode)
         {
             CurrentLeftSpeed =  (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatX, i), 7500)) + (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatY, i), 7500));
-            CurrentRightSpeed = (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatY, i), 7500)) - (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatX, i), 7500));
+            CurrentRightSpeed = (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatY, i), 7500)) -  (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatX, i), 7500));
         }
         
         if(PrecisionMode)
@@ -108,9 +108,9 @@ void ROBOT::Loop()
         if (Xbox.getButtonClick(B))
         IsArcadeMode = !IsArcadeMode;
         
-        if (Xbox.getButtonClick(START))
+       /* if (Xbox.getButtonClick(START))
         IsNoLimits =!IsNoLimits;
-
+    */
         if (Xbox.getButtonClick(XBOX))
         Auton.ToggleLockArmed();
         }
@@ -191,7 +191,7 @@ void ROBOT::Loop()
             Yukon.OLED.setTextSize(1.1);
             Yukon.OLED.print("Precsion Mode");
             Yukon.OLED.display();
-        }
+        }/*
         else if (LeftHasBeenLimited = (1))
         {
             Yukon.OLED.clearDisplay();
@@ -211,7 +211,7 @@ void ROBOT::Loop()
             Yukon.OLED.print("Has Been");
             Yukon.OLED.print("Limited (R)");            
             Yukon.OLED.display();
-        }
+        }*/
         else if ((IsNoLimits) = (false))
         {
             Yukon.OLED.clearDisplay();
