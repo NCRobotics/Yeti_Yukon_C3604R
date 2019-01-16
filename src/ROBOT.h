@@ -52,11 +52,11 @@ class ROBOT
     //PIN Declarations
     static const int _DriveRightPWM = 0;
     static const int _DriveRightDir = 14;
-    static const bool _DriveRightReversed = false;
+    static const bool _DriveRightReversed = true;
         
     static const int _DriveLeftPWM = 1;
     static const int _DriveLeftDir = 17;
-    static const bool _DriveLeftReversed = true;
+    static const bool _DriveLeftReversed = false;
         
     static const int _LiftMotorPWM = 2;
     static const int _LiftMotorDir = 21;
