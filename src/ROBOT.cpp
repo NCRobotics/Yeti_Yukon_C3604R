@@ -57,7 +57,7 @@ void ROBOT::Loop()
         CurrentLeftSpeed = PreviousLeftSpeed;
         CurrentRightSpeed = PreviousRightSpeed;
         }
-        if (IsNoLimits = (false))
+        if (IsNoLimits == false)
         {    
             if ((CurrentLeftSpeed - PreviousLeftSpeed) > 2)
             {   
@@ -212,7 +212,7 @@ void ROBOT::Loop()
             Yukon.OLED.print("Limited (R)");            
             Yukon.OLED.display();
         }*/
-        else if ((IsNoLimits) = (false))
+        else if ((IsNoLimits) == false)
         {
             Yukon.OLED.clearDisplay();
             Yukon.OLED.setCursor(0, 0);
