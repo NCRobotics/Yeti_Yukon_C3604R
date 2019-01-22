@@ -80,7 +80,7 @@ class ROBOT
   private:
       long _NextDisplayMillis = 0;
       long _NextMotorControllerWriteMillis = 0;
-      long  _NextGetPrevSpeed = 0;
+      long _NextGetPrevSpeed = 0;
 };
 
 #endif

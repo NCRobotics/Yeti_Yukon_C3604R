@@ -33,10 +33,13 @@ void ROBOT::Setup()
 bool PrecisionMode = false;
 bool IsArcadeMode = false;
 bool IsNoLimits = false;
+bool IsDebugMode = false;
 int LeftHasBeenLimited = 0;
 int RightHasBeenLimited = 0;
 int16_t PreviousLeftSpeed = 0;
 int16_t PreviousRightSpeed = 0;
+uint16_t LightSensorVal = analogRead(33);
+
 void ROBOT::Loop()
 {
      //Read The Controller
@@ -57,6 +60,7 @@ void ROBOT::Loop()
         CurrentLeftSpeed = PreviousLeftSpeed;
         CurrentRightSpeed = PreviousRightSpeed;
         }
+
         if (IsNoLimits == false)
         {    
             if ((CurrentLeftSpeed - PreviousLeftSpeed) > 2)
@@ -83,6 +87,26 @@ void ROBOT::Loop()
             CurrentLeftSpeed = CurrentLeftSpeed * .5;
             CurrentRightSpeed = CurrentRightSpeed  * .5;
         }
+        //To toggle all of the display outputs, simply comment or comment out the desired lines. Toggling from the remote to be added.
+        //Press the back button to engage Debug Mode. 
+        if(IsDebugMode)
+        {
+            Yukon.OLED.clearDisplay();
+            Yukon.OLED.setCursor(0, 0);
+            Yukon.OLED.setTextSize(1);
+           // Yukon.OLED.print("Current Right Speed");
+           // Yukon.OLED.println (CurrentRightSpeed);
+           // Yukon.OLED.print("Current Left Speed");
+           // Yukon.OLED.println(CurrentLeftSpeed);
+           // Yukon.OLED.print("Previous Right Speed");
+           // Yukon.OLED.println (PreviousRightSpeed);
+           // Yukon.OLED.print("Previous Left Speed");
+           // Yukon.OLED.println(PreviousLeftSpeed);
+           //Yukon.OLED.print ("Light Sensor Threshold");
+           //Yukon.OLED.println (_AutonLightSensorThreshold);
+            Yukon.OLED.print("Light Sensor Value");
+            Yukon.OLED.print(LightSensorVal);
+        }
 
         Drive.OISetSpeed(CurrentRightSpeed, CurrentLeftSpeed);
         Lift.OISetSpeed(Xbox.getButtonPress(R2, i) - Xbox.getButtonPress(L2, i));
@@ -101,22 +125,23 @@ void ROBOT::Loop()
         if (Xbox.getButtonClick(Y))
         PrecisionMode = !PrecisionMode;
 
-
         if (Xbox.getButtonClick(X))
         Auton.LaunchQueued();
 
         if (Xbox.getButtonClick(B))
         IsArcadeMode = !IsArcadeMode;
         
-       /* if (Xbox.getButtonClick(START))
-        IsNoLimits =!IsNoLimits;
-    */
+        /* if (Xbox.getButtonClick(START))
+        IsNoLimits =!IsNoLimits;*/
+
+        if (Xbox.getButtonClick(BACK))
+        IsDebugMode = !IsDebugMode;
+
         if (Xbox.getButtonClick(XBOX))
         Auton.ToggleLockArmed();
         }
         }
         }
-    
 
         if(digitalRead(_Button0) == LOW)
         {
@@ -124,18 +149,15 @@ void ROBOT::Loop()
             Yukon.SetupWIFI();
             delay(1000);
         }
-     //Read The Sensors
-    uint16_t LightSensorVal = analogRead(33); 
-   // Serial.println(LightSensorVal); 
-    State.AutonLightSensorActive = (LightSensorVal <= _AutonLightSensorThreshold);
 
-    /*uint16_t EncoderRevolutions = analogRead(32);
-    Serial.println(EncoderRevolutions);*/
+     //Read The Sensors 
+    State.AutonLightSensorActive = (LightSensorVal <= _AutonLightSensorThreshold);
+    // Serial.println(LightSensorVal); 
 
     //Write To Motor Controllers
     if (_NextMotorControllerWriteMillis < millis())
     {
-        _NextMotorControllerWriteMillis = millis() + 20; 
+    _NextMotorControllerWriteMillis = millis() + 20; 
     DriveRight.SetMotorSpeed(State.DriveRightSpeed);
     DriveLeft.SetMotorSpeed(State.DriveLeftSpeed);
     LiftMotor.SetMotorSpeed(State.LiftMotorSpeed);
@@ -153,12 +175,9 @@ void ROBOT::Loop()
             Yukon.OLED.clearDisplay();
             Yukon.OLED.setCursor(0, 0);
             Yukon.OLED.setTextSize(2);
-
             Yukon.OLED.println("LOCKED! ");
-
             Yukon.OLED.setTextSize(1);
             Yukon.OLED.print(Auton.QueuedProgramName());
-
             Yukon.OLED.display();
         }
         else if (Auton.IsArmed())
@@ -166,7 +185,6 @@ void ROBOT::Loop()
             Yukon.OLED.clearDisplay();
             Yukon.OLED.setCursor(0, 0);
             Yukon.OLED.setTextSize(2);
-
             Yukon.OLED.print("ARMED ");
             Yukon.OLED.println(LightSensorVal);
             Yukon.OLED.setTextSize(1);
@@ -227,6 +245,14 @@ void ROBOT::Loop()
             Yukon.OLED.setCursor(0, 0);
             Yukon.OLED.setTextSize(1.1);
             Yukon.OLED.print("Arcade Mode!");
+            Yukon.OLED.display();
+        }
+        else if (IsDebugMode)
+        {
+            Yukon.OLED.clearDisplay();
+            Yukon.OLED.setCursor(0, 0);
+            Yukon.OLED.setTextSize(1);
+            Yukon.OLED.print("Debug Mode!");
             Yukon.OLED.display();
         }
         else
