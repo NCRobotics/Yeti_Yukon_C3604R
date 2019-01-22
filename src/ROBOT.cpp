@@ -36,6 +36,7 @@ bool IsNoLimits = false;
 bool IsDebugMode = false;
 int LeftHasBeenLimited = 0;
 int RightHasBeenLimited = 0;
+int DebugModeOutput = 0; 
 int16_t PreviousLeftSpeed = 0;
 int16_t PreviousRightSpeed = 0;
 uint16_t LightSensorVal = analogRead(33);
@@ -94,18 +95,33 @@ void ROBOT::Loop()
             Yukon.OLED.clearDisplay();
             Yukon.OLED.setCursor(0, 0);
             Yukon.OLED.setTextSize(1);
-           // Yukon.OLED.print("Current Right Speed");
-           // Yukon.OLED.println (CurrentRightSpeed);
-           // Yukon.OLED.print("Current Left Speed");
-           // Yukon.OLED.println(CurrentLeftSpeed);
-           // Yukon.OLED.print("Previous Right Speed");
-           // Yukon.OLED.println (PreviousRightSpeed);
-           // Yukon.OLED.print("Previous Left Speed");
-           // Yukon.OLED.println(PreviousLeftSpeed);
-           //Yukon.OLED.print ("Light Sensor Threshold");
-           //Yukon.OLED.println (_AutonLightSensorThreshold);
-            Yukon.OLED.print("Light Sensor Value");
-            Yukon.OLED.print(LightSensorVal);
+
+            if (DebugModeOutput == 0)
+            Yukon.OLED.clearDisplay();
+            
+            if (DebugModeOutput == 1)
+            { Yukon.OLED.print("Current Right Speed");
+             Yukon.OLED.println (CurrentRightSpeed);}
+           
+           if (DebugModeOutput == 2)
+           {Yukon.OLED.print("Current Left Speed");
+            Yukon.OLED.println(CurrentLeftSpeed);}
+
+            if (DebugModeOutput == 3)
+            {Yukon.OLED.print("Previous Right Speed");
+            Yukon.OLED.println (PreviousRightSpeed);}
+
+            if (DebugModeOutput == 4)
+            {Yukon.OLED.print("Previous Left Speed");
+            Yukon.OLED.println(PreviousLeftSpeed);}
+
+            if (DebugModeOutput == 5)
+            {Yukon.OLED.print ("Light Sensor Threshold");
+             Yukon.OLED.println (_AutonLightSensorThreshold);}
+
+            if (DebugModeOutput == 6)
+            {Yukon.OLED.print("Light Sensor Value");
+            Yukon.OLED.print(LightSensorVal);}
         }
 
         Drive.OISetSpeed(CurrentRightSpeed, CurrentLeftSpeed);
@@ -136,6 +152,7 @@ void ROBOT::Loop()
 
         if (Xbox.getButtonClick(BACK))
         IsDebugMode = !IsDebugMode;
+        DebugModeOutput = (DebugModeOutput) + 1;
 
         if (Xbox.getButtonClick(XBOX))
         Auton.ToggleLockArmed();
