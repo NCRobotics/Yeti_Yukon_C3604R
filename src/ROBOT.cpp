@@ -88,8 +88,8 @@ void ROBOT::Loop()
             CurrentLeftSpeed = CurrentLeftSpeed * .5;
             CurrentRightSpeed = CurrentRightSpeed  * .5;
         }
-        //To toggle all of the display outputs, simply comment or comment out the desired lines. Toggling from the remote to be added.
         //Press the back button to engage Debug Mode. 
+        //Press it again to toggle the output to the display. 
         if(IsDebugMode)
         {
             Yukon.OLED.clearDisplay();
@@ -98,7 +98,7 @@ void ROBOT::Loop()
 
             if (DebugModeOutput == 0)
             Yukon.OLED.clearDisplay();
-            
+
             if (DebugModeOutput == 1)
             { Yukon.OLED.print("Current Right Speed");
              Yukon.OLED.println (CurrentRightSpeed);}
@@ -122,6 +122,11 @@ void ROBOT::Loop()
             if (DebugModeOutput == 6)
             {Yukon.OLED.print("Light Sensor Value");
             Yukon.OLED.print(LightSensorVal);}
+
+            if (DebugModeOutput == 7)
+            {
+                DebugModeOutput = 0;
+            }
         }
 
         Drive.OISetSpeed(CurrentRightSpeed, CurrentLeftSpeed);
@@ -153,6 +158,7 @@ void ROBOT::Loop()
         if (Xbox.getButtonClick(BACK))
         IsDebugMode = !IsDebugMode;
         DebugModeOutput = (DebugModeOutput) + 1;
+        
 
         if (Xbox.getButtonClick(XBOX))
         Auton.ToggleLockArmed();
