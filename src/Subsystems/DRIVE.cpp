@@ -56,6 +56,10 @@ bool DRIVE::ForSensor(int EighthTurnsNeeded, int16_t DriveRightSpeed,int16_t Dri
         Robot.Drive;
     }*/
     return retVal;
+    if (retVal == true)
+    {
+        EighthTurnsWent = 0;
+    }
 }
 
 bool DRIVE::ForAsync(long durationMS, int16_t DriveRightSpeed,int16_t DriveLeftSpeed)
