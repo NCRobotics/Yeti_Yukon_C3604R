@@ -20,7 +20,7 @@ class DRIVE : public YUKON_COMMAND
         int EighthTurnsWent = 0;
         bool ForAsync(long durationMS, int16_t DriveRightSpeed,int16_t DriveLeftSpeed);
         bool ForAsync(long durationMS, int16_t DriveRightSpeed,int16_t DriveLeftSpeed, uint8_t HoldPercent);
-        bool ForSensor(int EighthTurnsWent, int16_t DriveRightSpeed,int16_t DriveLeftSpeed, uint8_t HoldPercent);
+        bool ForSensor(int EighthTurnsNeeded, int16_t DriveRightSpeed,int16_t DriveLeftSpeed, uint8_t HoldPercent);
 
 long EncReport() 
 {

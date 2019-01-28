@@ -51,10 +51,10 @@ bool DRIVE::ForSensor(int EighthTurnsNeeded, int16_t DriveRightSpeed,int16_t Dri
     {
         delay(20);
     }
-    /*while (EighthTurnsWent < EighthTurnsNeeded)
+    while (EighthTurnsWent < EighthTurnsNeeded)
     {
-        Robot.Drive;
-    }*/
+        Robot.Drive.ForAsync(20, DriveRightSpeed, DriveLeftSpeed, HoldUntilPercent);
+    }
     return retVal;
     if (retVal == true)
     {
