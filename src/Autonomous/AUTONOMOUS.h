@@ -2,8 +2,10 @@
 
 #include <Arduino.h>
 #include <YUKON_AUTON.h>
+#include <Encoder.h>
 
     class ROBOT;
+    class EncRead;
 
     class AUTONOMOUS : public YUKON_AUTON
     {

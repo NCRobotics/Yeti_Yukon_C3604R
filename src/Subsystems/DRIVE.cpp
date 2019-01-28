@@ -44,6 +44,20 @@ bool DRIVE::ForAsync(long durationMS, int16_t DriveRightSpeed,int16_t DriveLeftS
     return retVal;
 }
 
+bool DRIVE::ForSensor(int EighthTurnsNeeded, int16_t DriveRightSpeed,int16_t DriveLeftSpeed, uint8_t HoldUntilPercent)
+{
+    bool retVal = ForSensor(EighthTurnsNeeded, DriveRightSpeed, DriveLeftSpeed, HoldUntilPercent);
+    while (CmdPercentComplete() < HoldUntilPercent && retVal)
+    {
+        delay(20);
+    }
+    /*while (EighthTurnsWent < EighthTurnsNeeded)
+    {
+        Robot.Drive;
+    }*/
+    return retVal;
+}
+
 bool DRIVE::ForAsync(long durationMS, int16_t DriveRightSpeed,int16_t DriveLeftSpeed)
 {
     _CmdDriveRightSpeed = DriveRightSpeed;

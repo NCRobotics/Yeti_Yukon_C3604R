@@ -47,5 +47,5 @@ void AUTONOMOUS::ExecAuton3()
 }
 void AUTONOMOUS::ExecAuton4()
 {
-    Robot.BuddyBot.ForAsync(1500, -255 );
+    Robot.Drive.ForSensor(16, 100, 100, 100);
 }

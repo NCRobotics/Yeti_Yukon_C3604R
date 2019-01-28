@@ -82,5 +82,18 @@ class ROBOT
       long _NextMotorControllerWriteMillis = 0;
       long _NextGetPrevSpeed = 0;
 };
-
 #endif
+
+/*class Encoder;
+
+    //Read the Encoders
+    void EncRead() 
+    {
+        long oldPosition = 0;
+        Encoder myEnc(26, 27);
+        long NewLeftPos = myEnc.read();
+    if (NewLeftPos != oldPosition) 
+        oldPosition = NewLeftPos;
+        Serial.println(NewLeftPos);
+    }*/
+

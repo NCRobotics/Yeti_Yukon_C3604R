@@ -1,8 +1,9 @@
 #include <Arduino.h>
 #include <Wire.h>
-
 #include <YETI_YUKON.h>
 #include <ROBOT.h>
+#include <Encoder.h>
+
 
 YETI_YUKON Yukon("YOURROBOTNAME", "aa1b8985-1aa3-488f-987f-67aed4d5cf38");
 ROBOT Robot(Yukon);
@@ -38,6 +39,7 @@ void loop()
 {
     Yukon.Loop(); 
     Robot.Loop();
+    
 
     delay(1);
     yield();
