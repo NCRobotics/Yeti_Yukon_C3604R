@@ -27,6 +27,7 @@ void AUTONOMOUS::Loop()
 //You need to travel about 1140 ms to go a whole tile
 void AUTONOMOUS::ExecAuton1()
 {
+    //Hits low flag and drives on the platform
     Robot.Drive.ForAsync(3000, 100, 100, 100);
     Robot.Drive.ForAsync(4300, -100, -100, 100);
     Robot.Drive.ForAsync(1500, -100, 100, 100);
@@ -35,7 +36,7 @@ void AUTONOMOUS::ExecAuton1()
   
 }
 void AUTONOMOUS::ExecAuton2()
-{
+{   //Skills Auton. Will hit flag, get BuddyBot, parks
     Robot.Drive.ForAsync(3000, 100, 100, 0);
     Robot.BuddyBot.ForAsync(6600, 100 );
     
@@ -47,5 +48,5 @@ void AUTONOMOUS::ExecAuton3()
 }
 void AUTONOMOUS::ExecAuton4()
 {
-    Robot.Drive.ForSensor(16, 100, 100, 100);
+
 }

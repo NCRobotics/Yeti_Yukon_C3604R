@@ -34,8 +34,8 @@ bool PrecisionMode = false;
 bool IsArcadeMode = false;
 bool IsNoLimits = false;
 bool IsDebugMode = false;
-int LeftHasBeenLimited = 0;
-int RightHasBeenLimited = 0;
+int LeftHasBeenLimited = -10;
+int RightHasBeenLimited = -10;
 int DebugModeOutput = 0; 
 int16_t PreviousLeftSpeed = 0;
 int16_t PreviousRightSpeed = 0;
@@ -62,7 +62,7 @@ void ROBOT::Loop()
         CurrentRightSpeed = PreviousRightSpeed;
         }
 
-        if (IsNoLimits == false)
+        /*if (IsNoLimits == false)
         {    
             if ((CurrentLeftSpeed - PreviousLeftSpeed) > 2)
             {   
@@ -75,7 +75,7 @@ void ROBOT::Loop()
                 CurrentRightSpeed = (PreviousRightSpeed + 2);
                 RightHasBeenLimited = 0;
             }
-        }
+        }*/
         
         if(IsArcadeMode)
         {
