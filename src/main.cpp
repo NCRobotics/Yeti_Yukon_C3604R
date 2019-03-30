@@ -2,7 +2,6 @@
 #include <Wire.h>
 #include <YETI_YUKON.h>
 #include <ROBOT.h>
-#include <Encoder.h>
 
 
 YETI_YUKON Yukon("YOURROBOTNAME", "aa1b8985-1aa3-488f-987f-67aed4d5cf38");
@@ -13,7 +12,10 @@ void DriveTask(void *pvParameters);
 void LiftTask(void *pvParameters);
 void ClawTask(void *pvParameters);
 void BuddyBotTask(void *pvParameters);
+void BallThrowerTask(void *pvParameters);
+void BallIntakeTask(void *pvParameters);
 void AutonTask(void *pvParameters);
+
 
 void setup()
 {
@@ -32,6 +34,8 @@ void setup()
     xTaskCreatePinnedToCore(LiftTask, "LiftTask", 10000, NULL, 1, NULL, 1);
     xTaskCreatePinnedToCore(ClawTask, "ClawTask", 10000, NULL, 1, NULL, 1);
     xTaskCreatePinnedToCore(BuddyBotTask, "BuddyBotTask", 10000, NULL, 1, NULL, 1);
+    xTaskCreatePinnedToCore(BallThrowerTask, "BallThrowerTask", 10000, NULL, 1, NULL, 1);
+    xTaskCreatePinnedToCore(BallIntakeTask, "BallIntakeTask", 10000, NULL, 1, NULL, 1);
     xTaskCreatePinnedToCore(AutonTask, "AutonTask", 10000, NULL, 1, NULL, 1);
 }
 
@@ -99,6 +103,28 @@ void BuddyBotTask(void *pvParameters)
         while (true)
         {
             Robot.BuddyBot.Loop();
+        }
+    }
+
+void BallThrowerTask(void *pvParameters)
+{
+    Serial.print("BallThrowerTask: Executing on core");
+    Serial.println(xPortGetCoreID());
+
+        while (true)
+        {
+            Robot.BallThrower.Loop();
+        }
+    }
+
+void BallIntakeTask(void *pvParameters)
+{
+    Serial.print("BallIntakeTask: Executing on core");
+    Serial.println(xPortGetCoreID());
+
+        while (true)
+        {
+            Robot.BallIntake.Loop();
         }
     }
     

@@ -1,17 +1,20 @@
-#include "ROBOT.h"
+ #include "ROBOT.h"
 ROBOT::ROBOT(YETI_YUKON &rYukon) : Yukon(rYukon),
-     DriveRight(_DriveRightPWM, &Yukon.PWM, _DriveRightDir, _DriveRightReversed), 
-     DriveLeft(_DriveLeftPWM, &Yukon.PWM, _DriveLeftDir, _DriveLeftReversed), 
-     LiftMotor(_LiftMotorPWM, &Yukon.PWM, _LiftMotorDir, _LiftMotorReversed), 
-     ClawMotor(_ClawMotorPWM, &Yukon.PWM, _ClawMotorDir, _ClawMotorReversed), 
-     BuddyBotLift(_BuddyBotLiftPWM, &Yukon.PWM, _BuddyBotLiftDir, _BuddyBotLiftReversed), 
+    DriveRight(_DriveRightPWM, &Yukon.PWM, _DriveRightDir, _DriveRightReversed), 
+    DriveLeft(_DriveLeftPWM, &Yukon.PWM, _DriveLeftDir, _DriveLeftReversed), 
+    LiftMotor(_LiftMotorPWM, &Yukon.PWM, _LiftMotorDir, _LiftMotorReversed), 
+    ClawMotor(_ClawMotorPWM, &Yukon.PWM, _ClawMotorDir, _ClawMotorReversed), 
+    BuddyBotLift(_BuddyBotLiftPWM, &Yukon.PWM, _BuddyBotLiftDir, _BuddyBotLiftReversed),
+    BallThrowerMotor(_BallThrowerPWM, &Yukon.PWM, _BallThrowerDir, _BallThrowerReversed), 
+    BallIntakeMotor(_BallIntakePWM, &Yukon.PWM, _BallIntakeDir, _BallIntakeReversed),
     Drive(*this),
     Lift(*this),
     Claw(*this),
     BuddyBot(*this),
-                                   Auton(*this),
-    
-        Xbox(&Usb)
+    BallThrower(*this),
+    BallIntake(*this),
+    Auton(*this),
+    Xbox(&Usb)
     
 
 {
@@ -25,21 +28,12 @@ void ROBOT::Setup()
     LiftMotor.Init();
     ClawMotor.Init();
     BuddyBotLift.Init();
-
+    BallThrowerMotor.Init();
+    BTserial.begin("C3604R");
     pinMode(_Button0, INPUT_PULLUP);
     pinMode(_LEDBuiltIn, OUTPUT);
     digitalWrite(_LEDBuiltIn, LOW);
 }
-bool PrecisionMode = false;
-bool IsArcadeMode = false;
-bool IsNoLimits = false;
-bool IsDebugMode = false;
-int LeftHasBeenLimited = -10;
-int RightHasBeenLimited = -10;
-int DebugModeOutput = 0; 
-int16_t PreviousLeftSpeed = 0;
-int16_t PreviousRightSpeed = 0;
-uint16_t LightSensorVal = analogRead(33);
 
 void ROBOT::Loop()
 {
@@ -52,9 +46,21 @@ void ROBOT::Loop()
         {
         if (Xbox.Xbox360Connected[i])
         {
-        int16_t CurrentRightSpeed  = (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatY, i), 7500));
-        int16_t CurrentLeftSpeed = (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(RightHatY, i), 7500));
-
+        CurrentRightSpeed  = (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatY, i), 7500));
+        CurrentLeftSpeed = (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(RightHatY, i), 7500));
+        if(CapMode == true)
+        {
+         LiftSpeed = (Xbox.getButtonPress(R2, i) - Xbox.getButtonPress(L2, i));
+         ClawSpeed = (Xbox.getButtonPress(A))*255;
+         BuddyLiftSpeed = ((Xbox.getButtonPress(R1, i)*255) - (Xbox.getButtonPress(L1, i)*255));
+        }
+        if(!CapMode)
+        {
+         BallThrowerSpeed = ((Xbox.getButtonPress(R1, i)*255) - (Xbox.getButtonPress(L1, i)*255));
+         BallIntakeSpeed = (Xbox.getButtonPress(R2, i) - Xbox.getButtonPress(L2, i));
+         
+        }
+        //This will get and store the previous speed
        if (_NextGetPrevSpeed < millis())
         {
         _NextGetPrevSpeed = millis() + 30;
@@ -62,40 +68,28 @@ void ROBOT::Loop()
         CurrentRightSpeed = PreviousRightSpeed;
         }
 
-        /*if (IsNoLimits == false)
-        {    
-            if ((CurrentLeftSpeed - PreviousLeftSpeed) > 2)
-            {   
-                CurrentLeftSpeed = (PreviousLeftSpeed + 2);
-                LeftHasBeenLimited = 0;
-            }
-
-            if ((CurrentRightSpeed - PreviousRightSpeed) > 2)
-            {
-                CurrentRightSpeed = (PreviousRightSpeed + 2);
-                RightHasBeenLimited = 0;
-            }
-        }*/
-        
+        //This changes the drive mode from 2 joysticks to 1
         if(IsArcadeMode)
         {
-            CurrentLeftSpeed =  (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatX, i), 7500)) + (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatY, i), 7500));
-            CurrentRightSpeed = (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatY, i), 7500)) -  (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatX, i), 7500));
+            CurrentRightSpeed =  (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatX, i), 7500)) + (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatY, i), 7500));
+            CurrentLeftSpeed =   (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatY, i), 7500)) -  (Yukon.XBOXJoystickTo255(Xbox.getAnalogHat(LeftHatX, i), 7500));
         }
-        
+        //This cuts all drive inputs by half for more precise movement
         if(PrecisionMode)
         {
             CurrentLeftSpeed = CurrentLeftSpeed * .5;
             CurrentRightSpeed = CurrentRightSpeed  * .5;
         }
-        //Press the back button to engage Debug Mode. 
-        //Press it again to toggle the output to the display. 
+        //This will put the serial monitor straight into the bluetooth serial monitor 
+        if (Serial.available()) 
+        {
+        BTserial.write(Serial.read());
+        }
+        //Press L3 button to engage Debug Mode. 
+        //Press R3 to toggle the output to the display. 
         if(IsDebugMode)
         {
-            Yukon.OLED.clearDisplay();
-            Yukon.OLED.setCursor(0, 0);
-            Yukon.OLED.setTextSize(1);
-
+            
             if (DebugModeOutput == 0)
             Yukon.OLED.clearDisplay();
 
@@ -119,10 +113,6 @@ void ROBOT::Loop()
             {Yukon.OLED.print ("Light Sensor Threshold");
              Yukon.OLED.println (_AutonLightSensorThreshold);}
 
-            if (DebugModeOutput == 6)
-            {Yukon.OLED.print("Light Sensor Value");
-            Yukon.OLED.print(LightSensorVal);}
-
             if (DebugModeOutput == 7)
             {
                 DebugModeOutput = 0;
@@ -130,19 +120,25 @@ void ROBOT::Loop()
         }
 
         Drive.OISetSpeed(CurrentRightSpeed, CurrentLeftSpeed);
-        Lift.OISetSpeed(Xbox.getButtonPress(R2, i) - Xbox.getButtonPress(L2, i));
-        Claw.OISetSpeed(Xbox.getButtonPress(A));
-        BuddyBot.OISetSpeed((Xbox.getButtonPress(R1, i)*255) - (Xbox.getButtonPress(L1, i)*255));
-    
+        Lift.OISetSpeed(LiftSpeed*0.5);
+        Claw.OISetSpeed(ClawSpeed);
+        BuddyBot.OISetSpeed(BuddyLiftSpeed);
+        BallThrower.OISetSpeed(BallThrowerSpeed);
+
+        //Controller Mapping
+        //Be sure to note the diiference between buttonclick and buttonpress!!!
         if (Xbox.getButtonClick(LEFT))
         Auton.QueuePrev();
         
         if (Xbox.getButtonClick(RIGHT))
         Auton.QueueNext();
-        
+
         if (Xbox.getButtonClick(DOWN))
         Auton.ToggleArmed();
         
+        if (Xbox.getButtonClick(R3))
+        EmergencyStop = !EmergencyStop;
+
         if (Xbox.getButtonClick(Y))
         PrecisionMode = !PrecisionMode;
 
@@ -152,15 +148,16 @@ void ROBOT::Loop()
         if (Xbox.getButtonClick(B))
         IsArcadeMode = !IsArcadeMode;
         
-        /* if (Xbox.getButtonClick(START))
-        IsNoLimits =!IsNoLimits;*/
-
         if (Xbox.getButtonClick(BACK))
-        IsDebugMode = !IsDebugMode;
-        DebugModeOutput = (DebugModeOutput) + 1;
-        
+        ToggleBt();
 
-        if (Xbox.getButtonClick(XBOX))
+        if (Xbox.getButtonClick(START))
+        CapMode = !CapMode;
+        
+        if (Xbox.getButtonClick(L3))
+        BuddyBot.ForAsync(1600, -255);
+
+        if (Xbox.getButtonClick(XBOX)) 
         Auton.ToggleLockArmed();
         }
         }
@@ -173,19 +170,53 @@ void ROBOT::Loop()
             delay(1000);
         }
 
-     //Read The Sensors 
+    //Read The Sensors 
+    uint16_t LightSensorVal = analogRead(33);
     State.AutonLightSensorActive = (LightSensorVal <= _AutonLightSensorThreshold);
-    // Serial.println(LightSensorVal); 
+    //BTserial.println(LightSensorVal);
+    //BTserial.println(mpu.Heading());
+    Serial.println(LightSensorVal); 
 
     //Write To Motor Controllers
-    if (_NextMotorControllerWriteMillis < millis())
+    if (_NextMotorControllerWriteMillis < millis() && !EmergencyStop)
     {
+    //It will not write to the motor controllers more than once every 20 milliseconds
     _NextMotorControllerWriteMillis = millis() + 20; 
     DriveRight.SetMotorSpeed(State.DriveRightSpeed);
     DriveLeft.SetMotorSpeed(State.DriveLeftSpeed);
     LiftMotor.SetMotorSpeed(State.LiftMotorSpeed);
     ClawMotor.SetMotorSpeed(State.ClawMotorSpeed);
     BuddyBotLift.SetMotorSpeed(State.BuddyBotLiftSpeed); 
+    BallThrowerMotor.SetMotorSpeed(State.BallThrowerMotorSpeed);
+    BallIntakeMotor.SetMotorSpeed(State.BallIntakeMotorSpeed);
+    }
+    if(Recording)
+    {
+        if(FirstTry == true) 
+            {
+            SPIFFS.begin(false, basepath, 5);
+            SPIFFS.format();   
+            FirstTry = false;
+            }
+                    //This puts the current speed in an array
+                    DriveRightSpeeds [ArrayPos] = CurrentRightSpeed; 
+                    DriveLeftSpeeds  [ArrayPos] = CurrentLeftSpeed;
+                    LiftSpeeds       [ArrayPos] = LiftSpeed;
+                    ClawSpeeds       [ArrayPos] = ClawSpeed;
+                    BuddyBotSpeeds   [ArrayPos] = BuddyLiftSpeed;
+                    ArrayPos++;
+                    //This will store those lines.
+                    SPIFFS.open("/spiffs/RightDrive", "a").println(DriveRightSpeeds[ArrayPos]);
+                    SPIFFS.open("/spiffs/LeftDrive", "a").println(DriveLeftSpeeds[ArrayPos]);
+                    SPIFFS.open("/spiffs/LiftSpeeds", "a").println(LiftSpeeds[ArrayPos]);
+                    SPIFFS.open("/spiffs/ClawSpeeds", "a").println(ClawSpeeds[ArrayPos]);
+                    SPIFFS.open("/spiffs/BuddyBotSpeeds", "a").println(BuddyBotSpeeds[ArrayPos]);
+                    //This makes the values line up with the motor controller write speeds.
+                    SPIFFS.open("/spiffs/RightDrive", "a").close();
+                    SPIFFS.open("/spiffs/LeftDrive", "a").close();
+                    SPIFFS.open("/spiffs/LiftSpeeds", "a").close();
+                    SPIFFS.open("/spiffs/ClawSpeeds", "a").close();
+                    SPIFFS.open("/spiffs/BuddyBotSpeeds", "a").close();
     }
 
     //Write the Display
@@ -216,68 +247,32 @@ void ROBOT::Loop()
             Yukon.OLED.display();
         }
         else if(Auton.QueuedProgramName() != "")
-        {
+        {   
             Yukon.OLED.clearDisplay();
             Yukon.OLED.setCursor(0, 0);
             Yukon.OLED.setTextSize(2);
-
             Yukon.OLED.print(Auton.QueuedProgramName());
-
             Yukon.OLED.display();
+        }
+        else if (RecordMode)
+        {
+            YukonDisplay(0, 0, 1, "Record Mode Armed!");
+        }
+        
+        else if (Recording)
+        {
+            YukonDisplay(0, 0, 1, "Recording Auton!");
         }
         else if(PrecisionMode)
         {
-            Yukon.OLED.clearDisplay();
-            Yukon.OLED.setCursor(0, 0);
-            Yukon.OLED.setTextSize(1.1);
-            Yukon.OLED.print("Precsion Mode");
-            Yukon.OLED.display();
-        }/*
-        else if (LeftHasBeenLimited = (1))
-        {
-            Yukon.OLED.clearDisplay();
-            Yukon.OLED.setCursor(0, 0);
-            Yukon.OLED.setTextSize(1.1);
-            Yukon.OLED.print("Acceleration");
-            Yukon.OLED.print("Has Been");
-            Yukon.OLED.print("Limited (L)");
-            Yukon.OLED.display();
+            YukonDisplay(0, 0, 1, "Precision Mode!");
         }
-        else if (RightHasBeenLimited = (1))
-        {
-            Yukon.OLED.clearDisplay();
-            Yukon.OLED.setCursor(0, 0);
-            Yukon.OLED.setTextSize(1.1);
-            Yukon.OLED.print("Acceleration");
-            Yukon.OLED.print("Has Been");
-            Yukon.OLED.print("Limited (R)");            
-            Yukon.OLED.display();
-        }*/
-        else if ((IsNoLimits) == false)
-        {
-            Yukon.OLED.clearDisplay();
-            Yukon.OLED.setCursor(0, 0);
-            Yukon.OLED.setTextSize(1.1);
-            Yukon.OLED.print("Acceleration");
-            Yukon.OLED.print("Limited");
-            Yukon.OLED.display();
-        }
+        
         else if(IsArcadeMode)
         {
-            Yukon.OLED.clearDisplay();
-            Yukon.OLED.setCursor(0, 0);
-            Yukon.OLED.setTextSize(1.1);
-            Yukon.OLED.print("Arcade Mode!");
-            Yukon.OLED.display();
+            YukonDisplay(0, 0, 1, "Arcade Mode!");
         }
-        else if (IsDebugMode)
-        {
-            Yukon.OLED.clearDisplay();
-            Yukon.OLED.setCursor(0, 0);
-            Yukon.OLED.setTextSize(1);
-            Yukon.OLED.print("Debug Mode!");
-            Yukon.OLED.display();
-        }
+    
         else
         {
             Yukon.OLED.clearDisplay();
@@ -289,3 +284,4 @@ void ROBOT::Loop()
         }
     }
 }
+

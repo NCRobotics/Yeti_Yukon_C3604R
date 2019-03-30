@@ -22,6 +22,8 @@
     void ExecAuton2();
     void ExecAuton3();
     void ExecAuton4();
+    void ExecAuton5();
+    void ExecAuton6();
 
     };
 

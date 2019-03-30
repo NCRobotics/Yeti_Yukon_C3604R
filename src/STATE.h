@@ -14,8 +14,10 @@ class STATE
     volatile int16_t LiftMotorSpeed = 0;
     volatile int16_t ClawMotorSpeed = 0;
     volatile int16_t BuddyBotLiftSpeed = 0;
+    volatile int16_t BallThrowerMotorSpeed = 0;
+    volatile int16_t BallIntakeMotorSpeed = 0;
     
-  volatile bool AutonLightSensorActive = false;
+    volatile bool AutonLightSensorActive = false;
 
   private:
 
